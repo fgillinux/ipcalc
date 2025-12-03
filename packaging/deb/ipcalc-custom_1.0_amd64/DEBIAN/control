@@ -1,0 +1,9 @@
+Package: ipcalc-custom
+Version: 1.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: Fabio Gil <fabiogil@gmail.com>
+Description: Custom IP Calculator
+ Calculates network details from IP/CIDR.
+ Supports auto-discovery of CIDR for public IPs using whois.
