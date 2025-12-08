@@ -5,7 +5,7 @@
  *  Calculadora de IP - Criado com auxilio de IA (Google Antigravity)
  *
  * Sintaxe: ipcalc <IP>/[<CIDR>]
- * Exemplo: ipcalc 201.28.120.50/29
+ * Exemplo: ipcalc 200.147.35.149/17
  * Exemplo (auto-discovery): ipcalc 200.147.35.149
  *
  *  Criado em: 03/12/2025
@@ -79,7 +79,7 @@ int get_cidr_from_whois(const char *ip_str) {
 int main(int argc, char *argv[]) {
   if (argc != 2) {
     fprintf(stderr, "Uso: %s <IP>[/CIDR]\n", argv[0]);
-    fprintf(stderr, "Exemplo: %s 201.28.120.50/29\n", argv[0]);
+    fprintf(stderr, "Exemplo: %s 200.147.35.149/17\n", argv[0]);
     fprintf(stderr, "Exemplo (auto-discovery): %s 200.147.35.149\n", argv[0]);
     return 1;
   }

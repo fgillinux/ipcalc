@@ -38,21 +38,21 @@ A sintaxe básica é:
 **1. Calcular rede com CIDR específico:**
 
 ```bash
-./ipcalc 201.28.120.50/29
+./ipcalc 200.147.35.149/17
 ```
 
 _Saída:_
 ```text
-Dados da Rede para:  201.28.120.50/29
+Dados da Rede para:  200.147.35.149/17
 ----------------------------------------
-IP Address:          201.28.120.50
-Netmask:             255.255.255.248
-CIDR:                /29
-Network Address:     201.28.120.48
-Broadcast Address:   201.28.120.55
-Host Min:            201.28.120.49
-Host Max:            201.28.120.54
-Hosts/Net:           6
+IP Address:          200.147.35.149
+Netmask:             255.255.128.0
+CIDR:                /17
+Network Address:     200.147.32.0
+Broadcast Address:   200.147.63.255
+Host Min:            200.147.32.1
+Host Max:            200.147.63.254
+Hosts/Net:           65534
 ```
 
 **2. Auto-discovery (sem CIDR):**
