@@ -13,10 +13,16 @@
 
 ## Instalação
 
-Para compilar o projeto, você precisará de um compilador C (como o `gcc`).
+Para compilar o projeto, basta utilizar o `make`:
 
 ```bash
-gcc ipcalc.c -o ipcalc
+make
+```
+
+Para limpar os arquivos gerados:
+
+```bash
+make clean
 ```
 
 ## Uso
