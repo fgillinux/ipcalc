@@ -25,11 +25,7 @@
 
 #define MAX_PLANNING_BLOCKS 1024
 
-typedef enum {
-  PLAN_NONE = 0,
-  PLAN_HOSTS,
-  PLAN_SUBNETS
-} plan_mode_t;
+typedef enum { PLAN_NONE = 0, PLAN_HOSTS, PLAN_SUBNETS } plan_mode_t;
 
 // Função para imprimir IP em decimal
 void print_ip(const char *label, uint32_t ip) {
@@ -38,6 +34,7 @@ void print_ip(const char *label, uint32_t ip) {
   printf("%-20s %s\n", label, inet_ntoa(addr));
 }
 
+// Função para converter CIDR para máscara
 uint32_t cidr_to_mask(int cidr) {
   if (cidr <= 0)
     return 0;
@@ -46,6 +43,7 @@ uint32_t cidr_to_mask(int cidr) {
   return 0xFFFFFFFF << (32 - cidr);
 }
 
+// Função para calcular a capacidade de hosts para um prefixo
 uint64_t host_capacity_for_prefix(int cidr) {
   if (cidr == 32)
     return 1;
@@ -57,6 +55,7 @@ uint64_t host_capacity_for_prefix(int cidr) {
   return total_ips - 2;
 }
 
+// Função para encontrar o melhor CIDR para um número de hosts desejados
 int best_cidr_for_hosts(uint64_t desired_hosts) {
   if (desired_hosts == 0)
     return -1;
@@ -75,6 +74,7 @@ void ip_to_string(uint32_t ip, char *buf, size_t len) {
   }
 }
 
+// Função para imprimir um bloco de planejamento
 void print_planning_block(uint64_t index, uint32_t network, int cidr) {
   uint32_t mask = cidr_to_mask(cidr);
   uint32_t broadcast = network | (~mask);
@@ -105,6 +105,7 @@ void print_planning_block(uint64_t index, uint32_t network, int cidr) {
          index + 1, net_buf, cidr, host_min_buf, host_max_buf, broadcast_buf);
 }
 
+// Função para listar blocos disponíveis
 void list_available_blocks(uint32_t network, int target_cidr,
                            uint64_t total_blocks) {
   if (total_blocks == 0)
@@ -112,9 +113,10 @@ void list_available_blocks(uint32_t network, int target_cidr,
 
   uint64_t limit = total_blocks;
   if (limit > MAX_PLANNING_BLOCKS) {
-    printf("Serão exibidos apenas os primeiros %d blocos de um total de %" PRIu64
-           " blocos.\n",
-           MAX_PLANNING_BLOCKS, total_blocks);
+    printf(
+        "Serão exibidos apenas os primeiros %d blocos de um total de %" PRIu64
+        " blocos.\n",
+        MAX_PLANNING_BLOCKS, total_blocks);
     limit = MAX_PLANNING_BLOCKS;
   }
 
@@ -131,6 +133,7 @@ void list_available_blocks(uint32_t network, int target_cidr,
   }
 }
 
+// Função para planejar blocos de hosts
 void plan_for_hosts(uint32_t network, int base_cidr, uint64_t desired_hosts) {
   uint64_t base_capacity = host_capacity_for_prefix(base_cidr);
   if (desired_hosts > base_capacity) {
@@ -166,6 +169,7 @@ void plan_for_hosts(uint32_t network, int base_cidr, uint64_t desired_hosts) {
   list_available_blocks(network, target_cidr, total_blocks);
 }
 
+// Função para planejar blocos de subredes
 void plan_for_subnets(uint32_t network, int base_cidr,
                       uint64_t desired_subnets) {
   if (desired_subnets == 0) {
@@ -252,8 +256,7 @@ int get_cidr_from_whois(const char *ip_str) {
 // Função principal
 int main(int argc, char *argv[]) {
   if (argc != 2 && argc != 4) {
-    fprintf(stderr,
-            "Uso: %s <IP>[/CIDR] [--plan-hosts N | --plan-subnets N]\n",
+    fprintf(stderr, "Uso: %s <IP>[/CIDR] [--plan-hosts N | --plan-subnets N]\n",
             argv[0]);
     fprintf(stderr, "Exemplo: %s 200.147.35.149/17\n", argv[0]);
     fprintf(stderr, "Exemplo (auto-discovery): %s 200.147.35.149\n", argv[0]);
@@ -263,8 +266,11 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
+  // Inicializa variáveis de planejamento
   plan_mode_t plan_mode = PLAN_NONE;
   uint64_t plan_value = 0;
+
+  // Verifica parametros de entrada
 
   if (argc == 4) {
     if (strcmp(argv[2], "--plan-hosts") == 0) {
