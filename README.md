@@ -86,6 +86,10 @@ Você também pode planejar a quantidade de sub-redes desejada substituindo por 
 
 Este projeto está licenciado sob a licença **GPLv3**.
 
+## CHANGELOG
+
+Para maiores detalhes, ver arquivo [CHANGELOG.md](CHANGELOG.md)
+
 ## Autor
 
 *   **Fabio Gil** - *Versão 1.1 (09/12/2025)*
