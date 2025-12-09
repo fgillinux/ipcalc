@@ -10,6 +10,7 @@
 *   **Auto-discovery de CIDR**: Se o CIDR não for fornecido, a ferramenta consulta o `whois` para tentar determinar o bloco alocado (apenas para IPs públicos).
 *   **Validação de IP Privado**: Detecta e alerta sobre IPs privados (RFC 1918), exigindo CIDR explícito para esses casos.
 *   **Suporte a CIDR /31 e /32**: Trata corretamente redes ponto-a-ponto (/31) e hosts únicos (/32).
+*   **Modo Planejamento**: Com as flags `--plan-hosts` ou `--plan-subnets`, encontra o CIDR mínimo que atende ao requisito e lista os blocos disponíveis dentro da rede fornecida.
 
 ## Instalação
 
@@ -30,7 +31,7 @@ make clean
 A sintaxe básica é:
 
 ```bash
-./ipcalc <IP>/[<CIDR>]
+./ipcalc <IP>/[<CIDR>] [--plan-hosts N | --plan-subnets N]
 ```
 
 ### Exemplos
@@ -62,10 +63,29 @@ Hosts/Net:           65534
 ```
 _A ferramenta irá consultar o whois para encontrar o bloco do IP._
 
+**3. Planejamento por número de hosts (exemplo):**
+
+```bash
+./ipcalc 192.168.0.0/24 --plan-hosts 50
+```
+
+_Saída (trecho):_
+
+```text
+[Planejamento - Hosts]
+Hosts desejados: 50
+CIDR recomendado: /26 (62 hosts utilizáveis por bloco)
+Blocos disponíveis dentro de /24: 4
+Bloco    1: 192.168.0.0     /26 Hosts: 192.168.0.1 -> 192.168.0.62 Broadcast: 192.168.0.63
+...
+```
+
+Você também pode planejar a quantidade de sub-redes desejada substituindo por `--plan-subnets <N>`.
+
 ## Licença
 
 Este projeto está licenciado sob a licença **GPLv3**.
 
 ## Autor
 
-*   **Fabio Gil** - *Versão 1.0 (03/12/2025)*
+*   **Fabio Gil** - *Versão 1.1 (09/12/2025)*
