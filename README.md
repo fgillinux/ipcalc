@@ -94,4 +94,6 @@ Para maiores detalhes, ver arquivo [CHANGELOG.md](CHANGELOG.md)
 
 *   **Fabio Gil** - *Versão 1.1 (09/12/2025)*
 
-*   **Criado com auxilio da IA (Google Antigravity e Codex da OpenAI**
+*Criado com auxilio da IA*
+- Google Antigravity
+- Codex da OpenAI
