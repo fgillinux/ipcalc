@@ -66,6 +66,7 @@ int best_cidr_for_hosts(uint64_t desired_hosts) {
   return -1;
 }
 
+// Função para converter IP em string
 void ip_to_string(uint32_t ip, char *buf, size_t len) {
   struct in_addr addr;
   addr.s_addr = htonl(ip);
@@ -270,7 +271,7 @@ int main(int argc, char *argv[]) {
   plan_mode_t plan_mode = PLAN_NONE;
   uint64_t plan_value = 0;
 
-  // Verifica parametros de entrada
+  //--Verifica parametros de entrada--
 
   if (argc == 4) {
     if (strcmp(argv[2], "--plan-hosts") == 0) {
