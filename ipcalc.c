@@ -9,6 +9,7 @@
  * Exemplo (auto-discovery): ipcalc 200.147.35.149
  *
  *  Criado em: 03/12/2025
+ *  Modificado em: 09/12/2025
  *      Autor: Fabio Gil
  *      Versão: 1.1
  *      Licença: GPLv3
