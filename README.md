@@ -1,6 +1,6 @@
 # ipcalc
 
-**Calculadora de IP - Criado com auxilio de IA (Google Antigravity)**
+**Calculadora de IP - Criado com auxilio de IA (Google Antigravity e Codex da OpenAI)**
 
 `ipcalc` é uma ferramenta de linha de comando simples e eficiente para calcular detalhes de redes IPv4. Ela aceita um endereço IP e uma máscara CIDR, ou pode tentar descobrir o CIDR automaticamente usando `whois` para IPs públicos.
 
