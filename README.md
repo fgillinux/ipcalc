@@ -14,6 +14,44 @@
 
 ## Instalação
 
+1. Obtenha os pacotes de instalação em release no github: https://github.com/fabiogil/ipcalc/releases
+
+2. Faça a instalação:
+
+Debian/Ubuntu (.deb):
+
+```bash
+sudo dpkg -i ipcalc-custom_1.1.x86_64.deb
+```
+
+Fedora (.rpm):
+
+```bash
+sudo dnf install ipcalc-custom-1.1.amd64.rpm
+```
+
+## Requisitos para Compilação (opcional)
+
+*   **GCC**: Compilador de C
+*   **Make**: Utilizado para compilação
+*   **Whois**: Utilizado para auto-discovery de CIDR    
+
+## Compilação (opcional)
+
+Obtenha o código-fonte do projeto em release no github: https://github.com/fabiogil/ipcalc/releases
+
+Descompacte o arquivo .tar.gz
+
+```bash
+tar -xvf ipcalc-1.1.x86_64.tar.gz
+```
+
+Entre na pasta descompactada
+
+```bash
+cd ipcalc-1.1.x86_64
+```
+
 Para compilar o projeto, basta utilizar o `make`:
 
 ```bash
