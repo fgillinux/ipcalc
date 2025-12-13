@@ -14,7 +14,7 @@
 
 ## Instalação
 
-1. Obtenha os pacotes de instalação em release no github: https://github.com/fabiogil/ipcalc/releases
+1. Obtenha os pacotes de instalação em release no github: https://github.com/fgillinux/ipcalc/releases
 
 2. Faça a instalação:
 
@@ -38,7 +38,7 @@ sudo dnf install ipcalc-custom-1.1.amd64.rpm
 
 ## Compilação (opcional)
 
-Obtenha o código-fonte do projeto em release no github: https://github.com/fabiogil/ipcalc/releases
+Obtenha o código-fonte do projeto em release no github: https://github.com/fgillinux/ipcalc/releases
 
 Descompacte o arquivo .tar.gz
 
