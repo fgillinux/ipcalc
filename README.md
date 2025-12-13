@@ -133,6 +133,6 @@ Para maiores detalhes, ver arquivo [CHANGELOG.md](CHANGELOG.md)
 *   **Fabio Gil** - *Versão 1.1 (09/12/2025)*
 
 ##
-*Criado com auxilio da Inteligência Artificial*
+*Criado com auxilio da Inteligência Artificial, usando:*
 - Google Antigravity
 - Codex da OpenAI
