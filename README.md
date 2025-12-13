@@ -21,13 +21,13 @@ Faça a instalação:
 Debian/Ubuntu (.deb):
 
 ```bash
-sudo dpkg -i ipcalc-custom_1.1.x86_64.deb
+sudo dpkg -i ipcalc-custom_1.x.x86_64.deb
 ```
 
 Fedora (.rpm):
 
 ```bash
-sudo dnf install ipcalc-custom-1.1.amd64.rpm
+sudo dnf install ipcalc-custom-1.x.x86_64.rpm
 ```
 
 ## Requisitos para Compilação (opcional)
@@ -43,13 +43,13 @@ Obtenha o código-fonte do projeto em release no github: https://github.com/fgil
 Descompacte o arquivo .tar.gz
 
 ```bash
-tar -xvf ipcalc-1.1.x86_64.tar.gz
+tar -xvf ipcalc-1.x.x86_64.tar.gz
 ```
 
 Entre na pasta descompactada
 
 ```bash
-cd ipcalc-1.1.x86_64
+cd ipcalc-1.x.x86_64
 ```
 
 Para compilar o projeto, basta utilizar o `make`:
