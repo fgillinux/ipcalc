@@ -2,6 +2,7 @@
 
 ## 2025-12-13
 
+- Atualização do README.md adicionando informações sobre instalação e compilação.
 - Correção de formatação de saída de blocos de sub-redes.
 
 
