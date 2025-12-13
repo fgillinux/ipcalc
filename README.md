@@ -2,7 +2,7 @@
 
 **Calculadora de IP**
 
-`ipcalc` é uma ferramenta de linha de comando simples para calcular detalhes de redes IPv4. Ela aceita um endereço IP e uma máscara CIDR, ou pode tentar descobrir o CIDR automaticamente usando `whois` para IPs públicos.
+`ipcalc` é uma ferramenta de linha de comando simples para calcular detalhes de redes IPv4. Ela aceita um endereço IP e uma máscara CIDR, ou pode tentar descobrir o CIDR automaticamente usando `whois` para IPs públicos. Além disso, a ferramenta pode calcular o número mínimo de sub-redes necessárias para atender a um requisito de número de hosts, o que é útil para planejamento de redes de computadores.
 
 ## Funcionalidades
 
