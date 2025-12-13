@@ -14,9 +14,9 @@
 
 ## Instalação
 
-1. Obtenha os pacotes de instalação em release no github: https://github.com/fgillinux/ipcalc/releases
+Obtenha os pacotes de instalação em release no github: https://github.com/fgillinux/ipcalc/releases
 
-2. Faça a instalação:
+Faça a instalação:
 
 Debian/Ubuntu (.deb):
 
