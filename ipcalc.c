@@ -102,10 +102,6 @@ void print_planning_block(uint64_t index, uint32_t network, int cidr) {
   ip_to_string(host_min, host_min_buf, sizeof(host_min_buf));
   ip_to_string(host_max, host_max_buf, sizeof(host_max_buf));
 
-  // printf("Bloco %4" PRIu64 ": %-16s/%-2d Hosts: %-16s -> %-16s Broadcast:
-  // %s\n",
-  //        index + 1, net_buf, cidr, host_min_buf, host_max_buf,
-  //        broadcast_buf);
   printf("Bloco %4" PRIu64 ": %s/%d\tHosts: %s->%s\tBroadcast: %s\n", index + 1,
          net_buf, cidr, host_min_buf, host_max_buf, broadcast_buf);
 }
