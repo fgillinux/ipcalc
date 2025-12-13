@@ -1,5 +1,10 @@
 # Changelog
 
+## 2025-12-13
+
+- Correção de formatação de saída de blocos de sub-redes.
+
+
 ## 2025-12-09
 
 - Adicionado o modo de planejamento com suporte a `--plan-hosts` e `--plan-subnets`, incluindo cálculo automático do CIDR adequado.
