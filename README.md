@@ -130,7 +130,7 @@ Para maiores detalhes, ver arquivo [CHANGELOG.md](CHANGELOG.md)
 
 ## Autor
 
-*   **Fabio Gil** - *Versão 1.1 (09/12/2025)*
+*   **Fabio Gil** - *Versão 1.1 (14/12/2025)*
 
 ##
 *Criado com auxilio da Inteligência Artificial, usando:*
