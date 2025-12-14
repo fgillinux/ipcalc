@@ -2,6 +2,8 @@
 
 ## 2025-12-13
 
+- Atualização do Makefile para suporte a compilação de RPM e DEB.
+- Adicionado arquivo de controle .gitignore.
 - Atualização do README.md adicionando informações sobre instalação e compilação.
 - Adicionado arquivo de licença LICENSE, GPLv3.
 - Correção de formatação de saída de blocos de sub-redes.
