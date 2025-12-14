@@ -15,6 +15,8 @@
  *      Licença: GPLv3
  */
 
+#define VERSION "1.1"
+
 #include <arpa/inet.h>
 #include <errno.h>
 #include <inttypes.h>
@@ -256,14 +258,27 @@ int get_cidr_from_whois(const char *ip_str) {
 
 // Função principal
 int main(int argc, char *argv[]) {
+  if (argc == 2 && strcmp(argv[1], "--version") == 0) {
+    printf("ipcalc version %s\n", VERSION);
+    printf("Copyleft (c) 2025 Fabio Gil\n");
+    printf("License GPLv3: GNU GPL version 3\n");
+    printf(
+        "This is free software: you are free to change and redistribute it.\n");
+    printf("There is NO WARRANTY, to the extent permitted by law.\n");
+    return 0;
+  }
+
   if (argc != 2 && argc != 4) {
-    fprintf(stderr, "Uso: %s <IP>[/CIDR] [--plan-hosts N | --plan-subnets N]\n",
-            argv[0]);
+    fprintf(
+        stderr,
+        "Uso: %s <IP>[/CIDR] [--plan-hosts N | --plan-subnets N] | --version\n",
+        argv[0]);
     fprintf(stderr, "Exemplo: %s 200.147.35.149/17\n", argv[0]);
     fprintf(stderr, "Exemplo (auto-discovery): %s 200.147.35.149\n", argv[0]);
     fprintf(stderr,
             "Exemplo (planejamento): %s 192.168.0.0/24 --plan-hosts 50\n",
             argv[0]);
+    fprintf(stderr, "Exemplo (versão): %s --version\n", argv[0]);
     return 1;
   }
 
