@@ -1,0 +1,31 @@
+
+# rpmbuild
+rpmbuild/*
+
+# debian build
+debian-build/*
+debian/
+
+# debian package
+*.deb
+
+# tarball
+*.tar.gz
+
+# rpm spec
+*.spec
+
+# rpm debuginfo
+*.debug
+
+# rpm sources
+*.src.rpm
+
+# rpm rpms
+*.rpm
+
+# rpm srpms
+*.srpm
+
+# binary
+ipcalc
