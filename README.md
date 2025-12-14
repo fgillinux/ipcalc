@@ -114,7 +114,7 @@ _Saída (trecho):_
 Hosts desejados: 50
 CIDR recomendado: /26 (62 hosts utilizáveis por bloco)
 Blocos disponíveis dentro de /24: 4
-Bloco    1: 192.168.0.0     /26 Hosts: 192.168.0.1 -> 192.168.0.62 Broadcast: 192.168.0.63
+Bloco    1: 192.168.0.0/26      Hosts: 192.168.0.1->192.168.0.62        Broadcast: 192.168.0.63
 ...
 ```
 
