@@ -1,6 +1,6 @@
 # Changelog
 
-## 2025-12-13
+## 2025-12-14
 
 - Atualização do Makefile para suporte a compilação de RPM e DEB.
 - Adicionado arquivo de controle .gitignore.
