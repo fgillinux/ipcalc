@@ -4,6 +4,10 @@ rpmbuild/*
 
 # debian build
 debian-build/*
+debian/
+
+# debian package
+*.deb
 
 # tarball
 *.tar.gz
@@ -23,3 +27,5 @@ debian-build/*
 # rpm srpms
 *.srpm
 
+# binary
+ipcalc
