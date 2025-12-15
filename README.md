@@ -2,12 +2,12 @@
 
 **Calculadora de IP**
 
-`ipcalc` é uma ferramenta de linha de comando simples para calcular detalhes de redes IPv4. Ela aceita um endereço IP e uma máscara CIDR, ou pode tentar descobrir o CIDR automaticamente usando `whois` para IPs públicos. Além disso, a ferramenta pode calcular o número mínimo de sub-redes necessárias para atender a um requisito de número de hosts, o que é útil para planejamento de redes de computadores.
+`ipcalc` é uma ferramenta de linha de comando simples para calcular detalhes de redes IPv4. Ela aceita um endereço IP e uma máscara CIDR, ou pode tentar descobrir o CIDR automaticamente usando o comando `whois` para IPs públicos. Além disso, a ferramenta pode calcular o número mínimo de sub-redes necessárias para atender a um requisito de número de hosts, o que é útil para planejamento de redes de computadores.
 
 ## Funcionalidades
 
 *   **Cálculo de Sub-rede**: Calcula Endereço de Rede, Broadcast, Máscara de Sub-rede, Faixa de Hosts (Min/Max) e Número de Hosts.
-*   **Auto-discovery de CIDR**: Se o CIDR não for fornecido, a ferramenta consulta o `whois` para tentar determinar o bloco alocado (apenas para IPs públicos).
+*   **Auto-discovery de CIDR**: Se o CIDR não for fornecido, a ferramenta consulta o comando `whois` para tentar determinar o bloco alocado (apenas para IPs públicos).
 *   **Validação de IP Privado**: Detecta e alerta sobre IPs privados (RFC 1918), exigindo CIDR explícito para esses casos.
 *   **Suporte a CIDR /31 e /32**: Trata corretamente redes ponto-a-ponto (/31) e hosts únicos (/32).
 *   **Modo Planejamento**: Com as flags `--plan-hosts` ou `--plan-subnets`, encontra o CIDR mínimo que atende ao requisito e lista os blocos disponíveis dentro da rede fornecida.
@@ -118,7 +118,7 @@ Hosts/Net:           65534
 ```bash
 ./ipcalc 200.147.35.149
 ```
-_A ferramenta irá consultar o whois para encontrar o bloco do IP._
+_A ferramenta irá consultar o comando `whois` para encontrar o bloco do IP._
 
 **3. Planejamento por número de hosts (exemplo):**
 
