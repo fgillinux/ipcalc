@@ -21,13 +21,13 @@ Faça a instalação:
 Debian/Ubuntu (.deb):
 
 ```bash
-sudo dpkg -i ipcalc-custom_1.x.x86_64.deb
+sudo dpkg -i ipcalc_1.x.x86_64.deb
 ```
 
 Fedora (.rpm):
 
 ```bash
-sudo dnf install ipcalc-custom-1.x.x86_64.rpm
+sudo dnf install ipcalc-1.x.x86_64.rpm
 ```
 
 ## Requisitos para Compilação (opcional)
@@ -62,6 +62,12 @@ Para limpar os arquivos gerados:
 
 ```bash
 make clean
+```
+
+Para instalar o projeto, basta utilizar o `make install`:
+
+```bash
+sudo make install
 ```
 
 ## Uso
