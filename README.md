@@ -29,7 +29,7 @@ Fedora (.rpm):
 ```bash
 sudo dnf install ipcalc-1.x.x86_64.rpm
 ```
-_Ou, se preferir, você pode compilar o projeto, seguindo as instruções de compilação descritas abaixo._
+_Ou, se preferir, você pode compilar e instalar o projeto, seguindo as instruções de compilação descritas abaixo._
 
 ## Requisitos para Compilação (opcional)
 
