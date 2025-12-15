@@ -21,14 +21,15 @@ Faça a instalação:
 Debian/Ubuntu (.deb):
 
 ```bash
-sudo dpkg -i ipcalc-custom_1.x.x86_64.deb
+sudo dpkg -i ipcalc_1.x.x86_64.deb
 ```
 
 Fedora (.rpm):
 
 ```bash
-sudo dnf install ipcalc-custom-1.x.x86_64.rpm
+sudo dnf install ipcalc-1.x.x86_64.rpm
 ```
+_Ou, se preferir, você pode compilar e instalar o projeto, seguindo as instruções de compilação descritas abaixo._
 
 ## Requisitos para Compilação (opcional)
 
@@ -52,6 +53,18 @@ Entre na pasta descompactada
 cd ipcalc-1.x.x86_64
 ```
 
+Ou, clone o repositório:
+
+```bash
+git clone https://github.com/fgillinux/ipcalc.git
+```
+
+Entre na pasta do repositório:
+
+```bash
+cd ipcalc
+```
+
 Para compilar o projeto, basta utilizar o `make`:
 
 ```bash
@@ -62,6 +75,12 @@ Para limpar os arquivos gerados:
 
 ```bash
 make clean
+```
+
+Para instalar o projeto, basta utilizar o `make install`:
+
+```bash
+sudo make install
 ```
 
 ## Uso
