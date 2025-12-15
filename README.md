@@ -52,6 +52,18 @@ Entre na pasta descompactada
 cd ipcalc-1.x.x86_64
 ```
 
+Ou, clone o repositório:
+
+```bash
+git clone https://github.com/fgillinux/ipcalc.git
+```
+
+Entre na pasta do repositório:
+
+```bash
+cd ipcalc
+```
+
 Para compilar o projeto, basta utilizar o `make`:
 
 ```bash
