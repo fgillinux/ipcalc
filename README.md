@@ -71,17 +71,18 @@ Para compilar o projeto, basta utilizar o `make`:
 make
 ```
 
-Para limpar os arquivos gerados:
-
-```bash
-make clean
-```
-
 Para instalar o projeto, basta utilizar o `make install`:
 
 ```bash
 sudo make install
 ```
+
+Para limpar os arquivos gerados (quando necessário):
+
+```bash
+make clean
+```
+
 
 ## Uso
 
