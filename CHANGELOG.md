@@ -1,5 +1,9 @@
 # Changelog
 
+## 2025-12-17
+
+- Atualização do Makefile para suporte a compilação de SRPM.
+
 ## 2025-12-14
 
 - Atualização do Makefile para suporte a compilação de RPM e DEB.
