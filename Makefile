@@ -37,6 +37,17 @@ rpm: dist
 	rpmbuild --define "_topdir $$(pwd)/rpmbuild" -bb rpmbuild/SPECS/ipcalc.spec
 	cp rpmbuild/RPMS/*/*.rpm .
 
+srpm: dist
+	mkdir -p rpmbuild/BUILD
+	mkdir -p rpmbuild/RPMS
+	mkdir -p rpmbuild/SOURCES
+	mkdir -p rpmbuild/SPECS
+	mkdir -p rpmbuild/SRPMS
+	cp $(TARGET)-$(VERSION).tar.gz rpmbuild/SOURCES/
+	cp ipcalc.spec rpmbuild/SPECS/
+	rpmbuild --define "_topdir $$(pwd)/rpmbuild" -bs rpmbuild/SPECS/ipcalc.spec
+	cp rpmbuild/SRPMS/*.rpm .
+
 deb: $(TARGET)
 	mkdir -p debian-build/DEBIAN
 	mkdir -p debian-build$(PREFIX)/bin
