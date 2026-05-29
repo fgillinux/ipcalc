@@ -15,7 +15,7 @@
  *      Licença: GPLv3
  */
 
-#define VERSION "1.1"
+#define VERSION "1.2"
 
 #include <arpa/inet.h>
 #include <errno.h>
@@ -26,8 +26,23 @@
 #include <string.h>
 
 #define MAX_PLANNING_BLOCKS 1024
+#define MAX_LIST_RANGE_IPS 256
+#define MAX_SUBNETS_MERGE 16
 
-typedef enum { PLAN_NONE = 0, PLAN_HOSTS, PLAN_SUBNETS } plan_mode_t;
+typedef enum { 
+  PLAN_NONE = 0, 
+  PLAN_HOSTS, 
+  PLAN_SUBNETS,
+  OP_CHECK_IP,
+  OP_MERGE_SUBNETS,
+  OP_COMPARE_NETS,
+  OP_LIST_RANGE
+} operation_mode_t;
+
+typedef struct {
+  uint32_t network;
+  int cidr;
+} subnet_t;
 
 // Função para imprimir IP em decimal
 void print_ip(const char *label, uint32_t ip) {
@@ -223,6 +238,128 @@ int is_private_ip(uint32_t ip) {
   return 0;
 }
 
+// ===== OPERAÇÕES AVANÇADAS DE REDE =====
+
+// Verifica se um IP está contido em uma rede
+int is_ip_in_network(uint32_t ip, uint32_t network, int cidr) {
+  uint32_t mask = cidr_to_mask(cidr);
+  return (ip & mask) == network;
+}
+
+// Lista IPs dentro de um intervalo (com limite de segurança)
+void list_ip_range(uint32_t start, uint32_t end, int limit) {
+  uint32_t count = end - start + 1;
+  
+  if (count > limit) {
+    printf("[Aviso] Intervalo contém %" PRIu32 " IPs. Exibindo apenas os primeiros %d.\n", 
+           count, limit);
+    end = start + limit - 1;
+    count = limit;
+  }
+  
+  char ip_buf[INET_ADDRSTRLEN];
+  printf("\nListagem de IPs do intervalo:\n");
+  printf("Total de IPs: %" PRIu32 "\n", count);
+  printf("Primeiros/Últimos IPs:\n");
+  
+  for (uint32_t i = 0; i < count && i < 5; i++) {
+    ip_to_string(start + i, ip_buf, sizeof(ip_buf));
+    printf("  %s\n", ip_buf);
+  }
+  
+  if (count > 10) {
+    printf("  ...\n");
+  }
+  
+  for (uint32_t i = (count > 10 ? count - 5 : count - 1); i < count && i > 4; i--) {
+    ip_to_string(start + i, ip_buf, sizeof(ip_buf));
+    printf("  %s\n", ip_buf);
+  }
+}
+
+// Verifica se duas redes se sobrepõem
+int networks_overlap(uint32_t net1, int cidr1, uint32_t net2, int cidr2) {
+  uint32_t mask1 = cidr_to_mask(cidr1);
+  uint32_t mask2 = cidr_to_mask(cidr2);
+  
+  return (net1 & mask2) == (net2 & mask2) || (net2 & mask1) == (net1 & mask1);
+}
+
+// Compara duas redes
+void compare_networks(uint32_t net1, int cidr1, uint32_t net2, int cidr2) {
+  uint32_t mask1 = cidr_to_mask(cidr1);
+  uint32_t mask2 = cidr_to_mask(cidr2);
+  uint32_t broadcast1 = net1 | (~mask1);
+  uint32_t broadcast2 = net2 | (~mask2);
+  
+  char net1_buf[INET_ADDRSTRLEN], net2_buf[INET_ADDRSTRLEN];
+  char bc1_buf[INET_ADDRSTRLEN], bc2_buf[INET_ADDRSTRLEN];
+  
+  ip_to_string(net1, net1_buf, sizeof(net1_buf));
+  ip_to_string(net2, net2_buf, sizeof(net2_buf));
+  ip_to_string(broadcast1, bc1_buf, sizeof(bc1_buf));
+  ip_to_string(broadcast2, bc2_buf, sizeof(bc2_buf));
+  
+  printf("\n[Comparação de Redes]\n");
+  printf("----------------------------------------\n");
+  printf("Rede 1: %s/%d (%s - %s)\n", net1_buf, cidr1, net1_buf, bc1_buf);
+  printf("Rede 2: %s/%d (%s - %s)\n", net2_buf, cidr2, net2_buf, bc2_buf);
+  printf("----------------------------------------\n");
+  
+  if (networks_overlap(net1, cidr1, net2, cidr2)) {
+    printf("Status: SOBREPÕEM (Há conflito entre as redes)\n");
+    
+    if (cidr1 > cidr2) {
+      printf("Rede 1 está contida em Rede 2\n");
+    } else if (cidr2 > cidr1) {
+      printf("Rede 2 está contida em Rede 1\n");
+    } else {
+      printf("Redes são parcialmente sobrepostas\n");
+    }
+  } else {
+    printf("Status: NÃO SOBREPÕEM (Sem conflito)\n");
+  }
+}
+
+// Encontra o supernet para um conjunto de sub-redes
+int find_supernet(subnet_t *subnets, int count, uint32_t *super_net, int *super_cidr) {
+  if (count < 2)
+    return -1;
+  
+  // Encontra o menor e maior IP em todos os blocos
+  uint32_t min_ip = subnets[0].network;
+  uint32_t max_ip = subnets[0].network;
+  
+  uint32_t mask = cidr_to_mask(subnets[0].cidr);
+  max_ip |= (~mask);
+  
+  for (int i = 1; i < count; i++) {
+    uint32_t net = subnets[i].network;
+    mask = cidr_to_mask(subnets[i].cidr);
+    uint32_t bc = net | (~mask);
+    
+    if (net < min_ip)
+      min_ip = net;
+    if (bc > max_ip)
+      max_ip = bc;
+  }
+  
+  // Encontra o CIDR do supernet (começa do mais específico até encontrar o que cobre tudo)
+  for (int cidr = 31; cidr >= 0; cidr--) {
+    mask = cidr_to_mask(cidr);
+    uint32_t net = min_ip & mask;
+    uint32_t bc = net | (~mask);
+    
+    if (net <= min_ip && bc >= max_ip) {
+      *super_net = net;
+      *super_cidr = cidr;
+      return 0;
+    }
+  }
+  
+  return -1;
+}
+
 // Busca CIDR via whois
 int get_cidr_from_whois(const char *ip_str) {
   char command[256];
@@ -268,53 +405,142 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
-  if (argc != 2 && argc != 4) {
+  if (argc < 2) {
     fprintf(
         stderr,
-        "Uso: %s <IP>[/CIDR] [--plan-hosts N | --plan-subnets N] | --version\n",
-        argv[0]);
-    fprintf(stderr, "Exemplo: %s 200.147.35.149/17\n", argv[0]);
-    fprintf(stderr, "Exemplo (auto-discovery): %s 200.147.35.149\n", argv[0]);
-    fprintf(stderr,
-            "Exemplo (planejamento): %s 192.168.0.0/24 --plan-hosts 50\n",
-            argv[0]);
-    fprintf(stderr, "Exemplo (versão): %s --version\n", argv[0]);
+        "Uso: %s <IP>[/CIDR] [opções]\n"
+        "\nOpciones de Planejamento:\n"
+        "  --plan-hosts N          Planejamento de hosts\n"
+        "  --plan-subnets N        Planejamento de subredes\n"
+        "\nOperações Avançadas:\n"
+        "  --check-ip <IP>         Verifica se IP pertence à rede\n"
+        "  --compare-nets <IP2>/<CIDR2>  Compara duas redes\n"
+        "  --list-range            Lista IPs do intervalo (max %d IPs)\n"
+        "  --merge <IP2>/<CIDR2> [<IP3>/<CIDR3> ...]\n"
+        "                          Encontra supernet de múltiplas sub-redes\n"
+        "\nExemplos:\n"
+        "  %s 200.147.35.149/17\n"
+        "  %s 192.168.0.0/24 --plan-hosts 50\n"
+        "  %s 192.168.0.0/24 --check-ip 192.168.0.50\n"
+        "  %s 192.168.0.0/24 --compare-nets 192.168.1.0/24\n"
+        "  %s 192.168.0.0/24 --list-range\n"
+        "  %s 192.168.0.0/25 --merge 192.168.0.128/25\n",
+        argv[0], MAX_LIST_RANGE_IPS, argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
     return 1;
   }
 
-  // Inicializa variáveis de planejamento
-  plan_mode_t plan_mode = PLAN_NONE;
+  // Inicializa variáveis de operação
+  operation_mode_t op_mode = PLAN_NONE;
   uint64_t plan_value = 0;
+  char *op_arg1 = NULL;
+  subnet_t merge_subnets[MAX_SUBNETS_MERGE];
+  int merge_count = 0;
 
   //--Verifica parametros de entrada--
 
-  if (argc == 4) {
+  if (argc >= 3) {
     if (strcmp(argv[2], "--plan-hosts") == 0) {
-      plan_mode = PLAN_HOSTS;
+      if (argc < 4) {
+        fprintf(stderr, "Erro: --plan-hosts requer um valor numérico\n");
+        return 1;
+      }
+      op_mode = PLAN_HOSTS;
+      errno = 0;
+      char *endptr = NULL;
+      plan_value = strtoull(argv[3], &endptr, 10);
+
+      if (errno == ERANGE || endptr == argv[3] || *endptr != '\0') {
+        fprintf(stderr, "Valor numérico inválido: %s\n", argv[3]);
+        return 1;
+      }
+
+      if (plan_value == 0) {
+        fprintf(stderr,
+                "O valor informado para planejamento deve ser maior que zero.\n");
+        return 1;
+      }
     } else if (strcmp(argv[2], "--plan-subnets") == 0) {
-      plan_mode = PLAN_SUBNETS;
+      if (argc < 4) {
+        fprintf(stderr, "Erro: --plan-subnets requer um valor numérico\n");
+        return 1;
+      }
+      op_mode = PLAN_SUBNETS;
+      errno = 0;
+      char *endptr = NULL;
+      plan_value = strtoull(argv[3], &endptr, 10);
+
+      if (errno == ERANGE || endptr == argv[3] || *endptr != '\0') {
+        fprintf(stderr, "Valor numérico inválido: %s\n", argv[3]);
+        return 1;
+      }
+
+      if (plan_value == 0) {
+        fprintf(stderr,
+                "O valor informado para planejamento deve ser maior que zero.\n");
+        return 1;
+      }
+    } else if (strcmp(argv[2], "--check-ip") == 0) {
+      if (argc < 4) {
+        fprintf(stderr, "Erro: --check-ip requer um endereço IP\n");
+        return 1;
+      }
+      op_mode = OP_CHECK_IP;
+      op_arg1 = argv[3];
+    } else if (strcmp(argv[2], "--compare-nets") == 0) {
+      if (argc < 4) {
+        fprintf(stderr, "Erro: --compare-nets requer uma rede (IP/CIDR)\n");
+        return 1;
+      }
+      op_mode = OP_COMPARE_NETS;
+      op_arg1 = argv[3];
+    } else if (strcmp(argv[2], "--list-range") == 0) {
+      op_mode = OP_LIST_RANGE;
+    } else if (strcmp(argv[2], "--merge") == 0) {
+      if (argc < 4) {
+        fprintf(stderr, "Erro: --merge requer ao menos uma segunda rede (IP/CIDR)\n");
+        return 1;
+      }
+      op_mode = OP_MERGE_SUBNETS;
+      
+      // Processa todas as redes para merge
+      for (int i = 3; i < argc && merge_count < MAX_SUBNETS_MERGE; i++) {
+        char *subnet_str = strdup(argv[i]);
+        char *slash = strchr(subnet_str, '/');
+        
+        if (!slash) {
+          fprintf(stderr, "Erro: Rede inválida (use IP/CIDR): %s\n", argv[i]);
+          free(subnet_str);
+          return 1;
+        }
+        
+        *slash = '\0';
+        int cidr = atoi(slash + 1);
+        
+        if (cidr < 0 || cidr > 32) {
+          fprintf(stderr, "CIDR inválido: %s (deve ser entre 0 e 32)\n", slash + 1);
+          free(subnet_str);
+          return 1;
+        }
+        
+        struct in_addr addr;
+        if (inet_aton(subnet_str, &addr) == 0) {
+          fprintf(stderr, "IP inválido: %s\n", subnet_str);
+          free(subnet_str);
+          return 1;
+        }
+        
+        uint32_t ip = ntohl(addr.s_addr);
+        uint32_t mask = cidr_to_mask(cidr);
+        uint32_t network = ip & mask;
+        
+        merge_subnets[merge_count].network = network;
+        merge_subnets[merge_count].cidr = cidr;
+        merge_count++;
+        
+        free(subnet_str);
+      }
     } else {
       fprintf(stderr, "Opção inválida: %s\n", argv[2]);
-      return 1;
-    }
-
-    errno = 0;
-    char *endptr = NULL;
-    plan_value = strtoull(argv[3], &endptr, 10);
-
-    if (errno == ERANGE) {
-      perror("strtoull");
-      return 1;
-    }
-
-    if (endptr == argv[3] || *endptr != '\0') {
-      fprintf(stderr, "Valor numérico inválido: %s\n", argv[3]);
-      return 1;
-    }
-
-    if (plan_value == 0) {
-      fprintf(stderr,
-              "O valor informado para planejamento deve ser maior que zero.\n");
       return 1;
     }
   }
@@ -414,10 +640,127 @@ int main(int argc, char *argv[]) {
 
   printf("%-20s %" PRIu64 "\n", "Hosts/Net:", num_hosts);
 
-  if (plan_mode == PLAN_HOSTS) {
+  // Processa operações avançadas
+  if (op_mode == PLAN_HOSTS) {
     plan_for_hosts(network, cidr, plan_value);
-  } else if (plan_mode == PLAN_SUBNETS) {
+  } else if (op_mode == PLAN_SUBNETS) {
     plan_for_subnets(network, cidr, plan_value);
+  } else if (op_mode == OP_CHECK_IP) {
+    struct in_addr check_addr;
+    if (inet_aton(op_arg1, &check_addr) == 0) {
+      fprintf(stderr, "IP inválido para check: %s\n", op_arg1);
+      free(input);
+      return 1;
+    }
+    
+    uint32_t check_ip = ntohl(check_addr.s_addr);
+    char check_buf[INET_ADDRSTRLEN];
+    ip_to_string(check_ip, check_buf, sizeof(check_buf));
+    
+    printf("\n[Verificação de IP]\n");
+    printf("Verificando se %s está em %s/%d:\n", check_buf, ip_str, cidr);
+    
+    if (is_ip_in_network(check_ip, network, cidr)) {
+      printf("✓ SIM, %s pertence à rede %s/%d\n", check_buf, ip_str, cidr);
+    } else {
+      printf("✗ NÃO, %s NÃO pertence à rede %s/%d\n", check_buf, ip_str, cidr);
+    }
+  } else if (op_mode == OP_COMPARE_NETS) {
+    char *net2_str = strdup(op_arg1);
+    char *slash = strchr(net2_str, '/');
+    
+    if (!slash) {
+      fprintf(stderr, "Erro: Rede inválida (use IP/CIDR)\n");
+      free(net2_str);
+      free(input);
+      return 1;
+    }
+    
+    *slash = '\0';
+    int cidr2 = atoi(slash + 1);
+    
+    if (cidr2 < 0 || cidr2 > 32) {
+      fprintf(stderr, "CIDR inválido: %s\n", slash + 1);
+      free(net2_str);
+      free(input);
+      return 1;
+    }
+    
+    struct in_addr addr2;
+    if (inet_aton(net2_str, &addr2) == 0) {
+      fprintf(stderr, "IP inválido: %s\n", net2_str);
+      free(net2_str);
+      free(input);
+      return 1;
+    }
+    
+    uint32_t ip2 = ntohl(addr2.s_addr);
+    uint32_t mask2 = cidr_to_mask(cidr2);
+    uint32_t network2 = ip2 & mask2;
+    
+    compare_networks(network, cidr, network2, cidr2);
+    
+    free(net2_str);
+  } else if (op_mode == OP_LIST_RANGE) {
+    uint32_t host_start, host_end;
+    
+    if (cidr == 32) {
+      host_start = network;
+      host_end = network;
+    } else if (cidr == 31) {
+      host_start = network;
+      host_end = broadcast;
+    } else {
+      host_start = network + 1;
+      host_end = broadcast - 1;
+    }
+    
+    list_ip_range(host_start, host_end, MAX_LIST_RANGE_IPS);
+  } else if (op_mode == OP_MERGE_SUBNETS) {
+    // Adiciona a primeira rede (do argumento principal) ao array de merge
+    if (merge_count < MAX_SUBNETS_MERGE) {
+      subnet_t first_subnet = {network, cidr};
+      // Desloca os outros
+      for (int i = merge_count; i > 0; i--) {
+        merge_subnets[i] = merge_subnets[i - 1];
+      }
+      merge_subnets[0] = first_subnet;
+      merge_count++;
+    }
+    
+    if (merge_count < 2) {
+      printf("[Erro] --merge requer ao menos 2 sub-redes\n");
+      free(input);
+      return 1;
+    }
+    
+    printf("\n[Merge de Sub-redes]\n");
+    printf("Processando %d redes:\n", merge_count);
+    
+    for (int i = 0; i < merge_count; i++) {
+      char net_buf[INET_ADDRSTRLEN];
+      ip_to_string(merge_subnets[i].network, net_buf, sizeof(net_buf));
+      printf("  %d. %s/%d\n", i + 1, net_buf, merge_subnets[i].cidr);
+    }
+    
+    uint32_t super_net;
+    int super_cidr;
+    
+    if (find_supernet(merge_subnets, merge_count, &super_net, &super_cidr) == 0) {
+      char super_buf[INET_ADDRSTRLEN];
+      uint32_t super_mask = cidr_to_mask(super_cidr);
+      uint32_t super_bc = super_net | (~super_mask);
+      char super_bc_buf[INET_ADDRSTRLEN];
+      
+      ip_to_string(super_net, super_buf, sizeof(super_buf));
+      ip_to_string(super_bc, super_bc_buf, sizeof(super_bc_buf));
+      
+      printf("\n✓ Supernet encontrado:\n");
+      printf("  Rede: %s/%d\n", super_buf, super_cidr);
+      printf("  Intervalo: %s - %s\n", super_buf, super_bc_buf);
+    } else {
+      printf("\n✗ Não foi possível encontrar um supernet comum\n");
+    }
   }
 
   free(input);
